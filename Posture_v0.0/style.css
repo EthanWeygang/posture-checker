@@ -78,12 +78,8 @@ button:active {
 }
 
 .buttonsdiv{
-  display: flex;
-  justify-content: space-between;
   max-width: 150px;
   margin: 0 auto;
-  padding: 20px;
-  padding: 10px 0;
 }
 
 hr {
