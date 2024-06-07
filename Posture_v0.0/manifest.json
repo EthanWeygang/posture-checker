@@ -1,0 +1,25 @@
+{
+    "manifest_version": 3,
+    "name": "Posture Checker",
+    "version": "0.0.1",
+    "description": "A posture reminder",
+    "icons": {
+        "16": "content/16x16_trans.png",
+        "48": "content/48x48_trans.png",
+        "128": "content/128x128_trans.png"
+    },
+    "action": {
+        "default_icon": "content/16x16_trans.png",
+        "default_popup": "popup.html"
+    },
+    "background":{
+        "service_worker": "background.js"
+    },
+    "permissions": [
+        "storage",
+        "notifications",
+        "alarms"
+        ]
+
+}
+    

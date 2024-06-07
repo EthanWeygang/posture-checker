@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="jquery-3.7.1.min.js"></script>
+    <script src="popup.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz@9..40&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <b>Input how often to remind yourself</b>
+
+    <div class="circleholder">
+        <div class="circle">
+            <p class="sliderval" id="sliderval">20</p> 
+        </div>
+
+            <p>minutes</p>
+    </div>
+
+    <input type="range" min="1" max="60" value="20" id="slider">
+
+    <div class="buttonsdiv">
+        <button type="submit" id="button">Start</button>
+    </div>
+  </body>
+</html>

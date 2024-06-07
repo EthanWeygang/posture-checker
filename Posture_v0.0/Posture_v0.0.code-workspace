@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../BudgetManager"
+		},
+		{
+			"path": "../FirstChromeExtension"
+		},
+		{
+			"path": "../Extra"
+		}
+	],
+	"settings": {}
+}
