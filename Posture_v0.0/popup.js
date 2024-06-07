@@ -1,20 +1,29 @@
 $(document).ready(function() {
-    chrome.storage.sync.get(['sliderval'], function(result) {
+    chrome.storage.sync.get(['sliderval', 'buttonstate'], function(result) {
         $("#slider").val(result.sliderval);
         $("#sliderval").text(result.sliderval);
-        $("buttonactive").text = chrome.alarms
-    });
-   
-    $("#button").click(function(){
-        chrome.runtime.sendMessage({time: $("#slider").val()});
-        console.log("Alarm message sent");
-        $("#button").id = "buttonactive"; // Changes button to active
+
+        if (result.buttonstate === "active") { // Checks in storage if the button was active when last closed
+            $("#buttoninactive").text("Stop")
+            $("#buttoninactive").attr("id", "buttonactive")
+        }
     });
 
-    $("#buttonactive").click(function(){
+   
+    $(document).on("click", "#buttoninactive", function(){
+        chrome.runtime.sendMessage({time: $("#slider").val()});
+        console.log("Alarm message sent");
+        $("#buttoninactive").text("Stop");
+        $("#buttoninactive").attr("id", "buttonactive"); // Changes button to active
+        chrome.storage.sync.set({"buttonstate": "active"}) // Changes storage variable to active
+    });
+
+    $(document).on("click", "#buttonactive", function(){
         chrome.runtime.sendMessage({clear: true});
         console.log("Alarm cleared");
-        $("#buttonactive").id = "button"; // Changes button to inactive
+        $("#buttonactive").text("Start");
+        $("#buttonactive").attr("id", "buttoninactive"); // Changes button to inactive
+        chrome.storage.sync.set({"buttonstate": "inactive"}) // Changes storage variable to inactive
     });
     
     $("#slider").on("input", function(){
