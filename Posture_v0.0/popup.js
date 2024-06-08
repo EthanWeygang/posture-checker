@@ -6,6 +6,7 @@ $(document).ready(function() {
         if (result.buttonstate === "active") { // Checks in storage if the button was active when last closed
             $("#buttoninactive").text("Stop")
             $("#buttoninactive").attr("id", "buttonactive")
+            $("#slider").attr("disabled", "true")
         }
     });
 
@@ -13,18 +14,34 @@ $(document).ready(function() {
     $(document).on("click", "#buttoninactive", function(){
         chrome.runtime.sendMessage({time: $("#slider").val()});
         console.log("Alarm message sent");
+
         $("#buttoninactive").text("Stop");
         $("#buttoninactive").attr("id", "buttonactive"); // Changes button to active
-        chrome.storage.sync.set({"buttonstate": "active"}) // Changes storage variable to active
+        $("#slider").attr("disabled", "true");
+        chrome.storage.sync.set({"buttonstate": "active"}); // Changes storage variable to active
     });
 
     $(document).on("click", "#buttonactive", function(){
         chrome.runtime.sendMessage({clear: true});
         console.log("Alarm cleared");
+
         $("#buttonactive").text("Start");
         $("#buttonactive").attr("id", "buttoninactive"); // Changes button to inactive
-        chrome.storage.sync.set({"buttonstate": "inactive"}) // Changes storage variable to inactive
+        $("#slider").removeAttr("disabled");
+        chrome.storage.sync.set({"buttonstate": "inactive"}); // Changes storage variable to inactive
     });
+
+    $(document).on("click", "#sounds", function(){
+        chrome.storage.sync.get("soundsOn", function(result) {
+            
+            if (result.soundsOn){
+                chrome.storage.sync.set({"soundsOn": false})
+            } 
+            else{
+                chrome.storage.sync.set({"soundsOn": true})
+            }
+        });
+    })
     
     $("#slider").on("input", function(){
         $("#sliderval").text($("#slider").val().toString());
