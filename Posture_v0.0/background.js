@@ -40,7 +40,6 @@ chrome.alarms.onAlarm.addListener(() => { //Add listener which executes when ala
                 message: quips[0],
                 silent: true,
                 requireInteraction: true}
-                console.log("WORKING")
         }
         else {
             var notif = {
