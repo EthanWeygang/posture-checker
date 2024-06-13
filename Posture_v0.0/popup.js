@@ -22,6 +22,7 @@ $(document).ready(function() {
         chrome.storage.sync.get("started", function(result){
             if (result.started === false){
 
+                chrome.runtime.sendMessage({clear: true});
                 chrome.runtime.sendMessage({time: $("#slider").val()});
                 $("#startbutton").text("Stop");
                 $("#slider").attr("disabled", "true");
