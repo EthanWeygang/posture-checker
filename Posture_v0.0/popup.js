@@ -1,6 +1,6 @@
 $(document).ready(function() {
     // Prepares popup when opened
-    chrome.storage.sync.get(['sliderval', 'started', 'soundsOn'], function(result) {
+    chrome.storage.sync.get(['os', 'sliderval', 'started', 'soundsOn'], function(result) {
         $("#slider").val(result.sliderval);
         $("#sliderval").text(result.sliderval);
 
@@ -9,9 +9,12 @@ $(document).ready(function() {
             $("#slider").attr("disabled", "true");
         }
 
-        if ((result.soundsOn) === false){
-            $("#sounds").text("Muted");
+        if (result.os === "mac"){
+            $("#sounds").remove()
         }
+        else if ((result.soundsOn) === false) {
+            $("#sounds").text("Muted");
+        };
     });
 
     // Toggles timer

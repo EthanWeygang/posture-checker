@@ -1,6 +1,10 @@
 const quips = ["Check your posture!", "funny response B", "funny response C"]
 chrome.storage.sync.set({"started" : false})
 chrome.storage.sync.set({"soundsOn" : true})
+chrome.runtime.getPlatformInfo(function(result){
+    chrome.storage.sync.set({"os" : result.os})
+    console.log("User is on " + result.os)
+})
 
 chrome.runtime.onMessage.addListener(function(request){ // Makes listener which executes code every time button is pressed
 
