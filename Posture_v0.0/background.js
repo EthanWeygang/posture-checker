@@ -47,7 +47,7 @@ chrome.alarms.onAlarm.addListener(() => { //Add listener which executes when ala
                 
         }
 
-        chrome.notifications.create("notifId", notif); //Create notification
+    chrome.notifications.create("notifId", notif); //Create notification
     console.log("Notification sent")
 
     /*chrome.windows.create({ //Create window (Manifest v3 doesnt let you play sounds without an open window :') )
