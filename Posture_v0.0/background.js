@@ -38,7 +38,7 @@ chrome.alarms.onAlarm.addListener(() => { //Add listener which executes when ala
                 title: "Posture Checker",
                 iconUrl: "content/48x48_trans.png",
                 message: quips[0],
-                silent: true,
+                silent: false,
                 requireInteraction: true}
         }
         else {
@@ -47,9 +47,8 @@ chrome.alarms.onAlarm.addListener(() => { //Add listener which executes when ala
                 title: "Posture Checker",
                 iconUrl: "content/48x48_trans.png",
                 message: quips[0],
-                silent: false,
+                silent: true,
                 requireInteraction: true}
-                
         }
 
     chrome.notifications.create("notifId", notif); //Create notification
