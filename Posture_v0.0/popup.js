@@ -13,7 +13,7 @@ $(document).ready(function() {
             $("#sounds").remove()
         }
         else if ((result.soundsOn) === false) {
-            $("#sounds").text("Muted");
+            $("#sounds").text("Unmute");
         };
     });
 
@@ -44,11 +44,11 @@ $(document).ready(function() {
         chrome.storage.sync.get("soundsOn", function(result) {
             
             if (result.soundsOn === true){
-                $("#sounds").text("Muted")
+                $("#sounds").text("Unmute")
                 chrome.storage.sync.set({"soundsOn": false})
             } 
             else{
-                $("#sounds").text("Unmuted")
+                $("#sounds").text("Mute")
                 chrome.storage.sync.set({"soundsOn": true})
             }
         });
