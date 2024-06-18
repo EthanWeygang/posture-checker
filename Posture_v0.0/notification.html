@@ -4,11 +4,6 @@
 <html>
     <head>
         <script src="jquery-3.7.1.min.js"></script>
-        <script>
-//Because of the way manifest V3 works, you cant play audio from the background script. You have to play it from the html, 
-//But you cant play it from the html because the html is not open, so this file is an invisible html that plays the audio.
-//Thank Bard for this band-aid solution, StackOverflow was useless.
-        </script>
     </head>
     <body>
         <audio id="alert" src="content/Alert.mp3" autoplay hidden></audio>
