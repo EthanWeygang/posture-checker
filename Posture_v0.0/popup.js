@@ -1,6 +1,6 @@
 $(document).ready(function() {
-    // Prepares popup when opened
-    chrome.storage.sync.get(['os', 'sliderval', 'started', 'soundsOn'], function(result) {
+    
+    chrome.storage.sync.get(["os", "sliderval", "started", "soundsOn"], function(result) {
         $("#slider").val(result.sliderval);
         $("#sliderval").text(result.sliderval);
 
@@ -15,6 +15,7 @@ $(document).ready(function() {
         else if ((result.soundsOn) === false) {
             $("#sounds").text("Unmute");
         };
+        console.log("started:" + result.started);
     });
 
     // Toggles timer
@@ -22,12 +23,12 @@ $(document).ready(function() {
         chrome.storage.sync.get("started", function(result){
             if (result.started === false){
 
-                chrome.runtime.sendMessage({clear: true});
                 chrome.runtime.sendMessage({time: $("#slider").val()});
                 $("#startbutton").text("Stop");
                 $("#slider").attr("disabled", "true");
                 
                 chrome.storage.sync.set({"started": true});
+                console.log("started -> true");
             }
             else{
                 chrome.runtime.sendMessage({clear: true});
@@ -35,6 +36,7 @@ $(document).ready(function() {
                 $("#slider").removeAttr("disabled");
                 
                 chrome.storage.sync.set({"started": false});
+                console.log("started -> false");
             }
         });
    });
