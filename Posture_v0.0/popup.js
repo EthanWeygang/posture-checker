@@ -43,6 +43,9 @@ $(document).ready(function() {
 
     // Toggles sounds
     $(document).on("click", "#sounds", function(){
+        chrome.alarms.getAll(function(alarms){
+            console.log(alarms);
+        }),
         chrome.storage.sync.get("soundsOn", function(result) {
             
             if (result.soundsOn === true){
