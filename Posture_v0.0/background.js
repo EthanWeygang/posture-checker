@@ -55,36 +55,61 @@ chrome.runtime.onMessage.addListener(function(request){ // Makes listener which 
 chrome.alarms.onAlarm.addListener(() => { //Add listener which executes when alarm finishes
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         if (tabs.length === 0) {
-            console.log("NO ACTIVE TABS FOUND");
-            return;
+            console.log("NO ACTIVE TABS");
+
+            chrome.storage.sync.get("soundsOn", function(result) {
+                var notif = {
+                    type: "basic",
+                    title: "Posture Checker",
+                    iconUrl: "content/48x48_trans.png",
+                    message: quips[0],
+                    silent: !result.soundsOn,
+                    requireInteraction: true
+                };
+                chrome.notifications.create(notif);
+                return
+            });
         }
         
         chrome.tabs.sendMessage(tabs[0].id, { action: "checkFullscreen" }, (response) => {
+            if (chrome.runtime.lastError) {
+                console.log("RUNTIME ERROR: " + chrome.runtime.lastError.message);
 
+                chrome.storage.sync.get("soundsOn", function(result) {
+                    var notif = {
+                        type: "basic",
+                        title: "Posture Checker",
+                        iconUrl: "content/48x48_trans.png",
+                        message: quips[0],
+                        silent: !result.soundsOn,
+                        requireInteraction: true
+                    };
+                    chrome.notifications.create("notifId", notif); // Create notification
+                    console.log("NOTIFICATION SENT");
+                });
+                return;
+            }
+
+            if (!response || typeof response.isFullscreen === 'undefined') {
+                console.log("INVALID RESPONSE");
+                return;
+            }
+            
+            
             if (response.isFullscreen){
                 console.log("FULLSCREEN DETECTED, ALARM NOTIFICATION NOT SENT")
                 return;
             }
 
             chrome.storage.sync.get("soundsOn", function(result){
-                if (result.soundsOn == true){
-                    var notif = {
-                        type: "basic",
-                        title: "Posture Checker",
-                        iconUrl: "content/48x48_trans.png",
-                        message: quips[0],
-                        silent: false,
-                        requireInteraction: false}
-                }
-                else {
-                    var notif = {
-                        type: "basic",
-                        title: "Posture Checker",
-                        iconUrl: "content/48x48_trans.png",
-                        message: quips[0],
-                        silent: true,
-                        requireInteraction: false}
-                }
+                var notif = {
+                    type: "basic",
+                    title: "Posture Checker",
+                    iconUrl: "content/48x48_trans.png",
+                    message: quips[0],
+                    silent: !result.soundsOn,
+                    requireInteraction: true
+                };
         
             chrome.notifications.create("notifId", notif); //Create notification
             console.log("NOTIFICATION SENT")
