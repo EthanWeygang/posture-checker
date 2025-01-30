@@ -1,4 +1,4 @@
-const quips = ["Check your posture!", "funny response B", "funny response C"]
+const quips = ["Check your posture!", "Are you sitting straight?", "You require back-up!", "Posture check!", "Sit up! Thank me later :)"];
 
 chrome.storage.sync.get(["started", "soundsOn"], function(result) {
     if (result.started === undefined) {
@@ -17,14 +17,14 @@ chrome.runtime.getPlatformInfo(function(result){
     console.log("USER IS ON " + result.os)
 })
 
-chrome.alarms.clear("Posture Alarm", (wasCleared) => {
-    if (wasCleared){
-        console.log("ALARM CLEARED");  
-    }
-    else { 
-        console.log("ATTEMPTED CLEAR BUT NO ALARMS FOUND")
-    }
-}); 
+// chrome.alarms.clear("Posture Alarm", (wasCleared) => {
+//     if (wasCleared){
+//         console.log("ALARM CLEARED");  
+//     }
+//     else { 
+//         console.log("ATTEMPTED CLEAR BUT NO ALARMS FOUND")
+//     }
+// }); 
 
 
 
@@ -70,6 +70,22 @@ chrome.alarms.onAlarm.addListener(() => { //Add listener which executes when ala
                 return
             });
         }
+
+
+        // Inject content script if not already present
+        const tabId = tabs[0].id;
+
+        chrome.scripting.executeScript(
+            {
+                target: { tabId },
+                files: ["content.js"],
+            },() => {
+                if (chrome.runtime.lastError) {
+                    console.log("Script injection failed: " + chrome.runtime.lastError.message);
+                    return;
+                }});
+        
+
         
         chrome.tabs.sendMessage(tabs[0].id, { action: "checkFullscreen" }, (response) => {
             if (chrome.runtime.lastError) {
@@ -114,7 +130,7 @@ chrome.alarms.onAlarm.addListener(() => { //Add listener which executes when ala
             chrome.notifications.create("notifId", notif); //Create notification
             console.log("NOTIFICATION SENT")
         
-            /*chrome.windows.create({ //Create window (Manifest v3 doesnt let you play sounds without an open window :') )
+            /*chrome.windows.create({ //Create window (Manifest v3 doesnt let you play sounds without an open window :') ) This is an unused feature but I'm keeping it here for future reference
         
                 url: chrome.runtime.getURL("notification.html"),
                 height: 1,
