@@ -105,7 +105,7 @@ chrome.alarms.onAlarm.addListener(() => { //Add listener which executes when ala
                 });
                 return;
             }
-
+ 
             if (!response || typeof response.isFullscreen === 'undefined') {
                 console.log("INVALID RESPONSE");
                 return;
