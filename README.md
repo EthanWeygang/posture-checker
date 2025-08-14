@@ -18,7 +18,7 @@
 <div align="left">
   <h1>🚀 Features 🚀</h1>
   <ul>
-    <li><strong>Start/Stop function</strong>: for starting and stopping</li>
+    <li><strong>Start/Stop function</strong>: For starting and stopping</li>
     <li><strong>Adjustable slider to select how often to remind yourself</strong>: Remind yourself whenever!</li>
     <li><strong>Mute button to mute notification sounds</strong>: Silence the audio cues</li>
     <li><strong>Simple notifications, click to clear!</strong>: Minimalistic!</li>
