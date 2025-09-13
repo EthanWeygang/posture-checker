@@ -17,14 +17,24 @@ chrome.runtime.getPlatformInfo(function(result){
     console.log("USER IS ON " + result.os)
 })
 
-// chrome.alarms.clear("Posture Alarm", (wasCleared) => {
-//     if (wasCleared){
-//         console.log("ALARM CLEARED");  
-//     }
-//     else { 
-//         console.log("ATTEMPTED CLEAR BUT NO ALARMS FOUND")
-//     }
-// }); 
+// Handle installation and updates
+chrome.runtime.onInstalled.addListener((details) => {
+    if (details.reason === "install") {
+        console.log("Extension installed for the first time");
+    } else if (details.reason === "update") {
+        // Try to restore alarm state after update
+        chrome.storage.sync.get(["started", "sliderval"], function(result) {
+            if (result.started === true && result.sliderval) {
+                chrome.alarms.create("Posture Alarm", {
+                    delayInMinutes: parseInt(result.sliderval),
+                    periodInMinutes: parseInt(result.sliderval)
+                });
+                console.log("RESTORED ALARM AFTER UPDATE FOR " + result.sliderval + " MINUTE(S)");
+            }
+        });
+        console.log("Extension updated from " + details.previousVersion + " to " + chrome.runtime.getManifest().version);
+    }
+});
 
 
 
@@ -58,15 +68,20 @@ chrome.alarms.onAlarm.addListener(() => { //Add listener which executes when ala
             console.log("NO ACTIVE TABS");
 
             chrome.storage.sync.get("soundsOn", function(result) {
+                // Select a random message from the quips array
+                const randomQuip = quips[Math.floor(Math.random() * quips.length)];
                 var notif = {
                     type: "basic",
                     title: "Posture Checker",
                     iconUrl: "content/48x48_trans.png",
-                    message: quips[0],
+                    message: randomQuip,
                     silent: !result.soundsOn,
                     requireInteraction: true
                 };
-                chrome.notifications.create(notif);
+                // Use timestamp as unique ID to prevent overwriting
+                const notificationId = "posture_" + Date.now();
+                chrome.notifications.create(notificationId, notif);
+                console.log("NOTIFICATION SENT (NO ACTIVE TABS)");
                 return
             });
         }
@@ -84,76 +99,100 @@ chrome.alarms.onAlarm.addListener(() => { //Add listener which executes when ala
                     console.log("Script injection failed: " + chrome.runtime.lastError.message);
                     return;
                 }});
-        
 
-        
-        chrome.tabs.sendMessage(tabs[0].id, { action: "checkFullscreen" }, (response) => {
-            if (chrome.runtime.lastError) {
-                console.log("RUNTIME ERROR: " + chrome.runtime.lastError.message);
 
+
+
+            
+            sendNotification();
+            
+            function sendNotification() {
                 chrome.storage.sync.get("soundsOn", function(result) {
+                    const randomQuip = quips[Math.floor(Math.random() * quips.length)];
                     var notif = {
                         type: "basic",
                         title: "Posture Checker",
                         iconUrl: "content/48x48_trans.png",
-                        message: quips[0],
+                        message: randomQuip,
                         silent: !result.soundsOn,
                         requireInteraction: true
                     };
-                    chrome.notifications.create("notifId", notif); // Create notification
+                    const notificationId = "posture_" + Date.now();
+                    chrome.notifications.create(notificationId, notif);
                     console.log("NOTIFICATION SENT");
-                });
-                return;
-            }
- 
-            if (!response || typeof response.isFullscreen === 'undefined') {
-                console.log("INVALID RESPONSE");
-                return;
-            }
-            
-            
-            if (response.isFullscreen){
-                console.log("FULLSCREEN DETECTED, ALARM NOTIFICATION NOT SENT")
-                return;
-            }
+                });}
+        
 
-            chrome.storage.sync.get("soundsOn", function(result){
-                var notif = {
-                    type: "basic",
-                    title: "Posture Checker",
-                    iconUrl: "content/48x48_trans.png",
-                    message: quips[0],
-                    silent: !result.soundsOn,
-                    requireInteraction: true
-                };
         
-            chrome.notifications.create("notifId", notif); //Create notification
-            console.log("NOTIFICATION SENT")
+        // Always set a timeout to ensure notification is sent even if message response fails
+        // const timeoutId = setTimeout(() => {
+        //     console.log("RESPONSE TIMEOUT - SENDING NOTIFICATION ANYWAY");
+        //     sendNotification();
+        // }, 2000); // 2 second timeout
         
-            /*chrome.windows.create({ //Create window (Manifest v3 doesnt let you play sounds without an open window :') ) This is an unused feature but I'm keeping it here for future reference
+        // chrome.tabs.sendMessage(tabs[0].id, { action: "checkFullscreen" }, (response) => {
+        //     if (chrome.runtime.lastError) {
+        //         console.log("RUNTIME ERROR: " + chrome.runtime.lastError.message);
+        //         clearTimeout(timeoutId); // Clear the timeout since we're handling it now
+        //         sendNotification();
+        //         return;
+        //     }
+ 
+        //     if (!response || typeof response.isFullscreen === 'undefined') {
+        //         console.log("INVALID RESPONSE - SENDING NOTIFICATION ANYWAY");
+        //         clearTimeout(timeoutId); // Clear the timeout since we're handling it now
+        //         sendNotification();
+        //         return;
+        //     }
+            
+        //     // Clear the timeout since we got a valid response
+        //     clearTimeout(timeoutId);
+            
+        //     // If in fullscreen, don't send notification
+        //     if (response.isFullscreen){
+        //         console.log("FULLSCREEN DETECTED, ALARM NOTIFICATION NOT SENT");
+        //         return;
+        //     }
+            
+
+        //     }
+            
+            
+        //     /*chrome.windows.create({ //Create window (Manifest v3 doesnt let you play sounds without an open window :') ) This is an unused feature but I'm keeping it here for future reference
         
-                url: chrome.runtime.getURL("notification.html"),
-                height: 1,
-                width: 1,
-                left: -1000,
-                top: -1000,
-                type: "popup",
-                focused: false,
-                state: "normal", 
+        //         url: chrome.runtime.getURL("notification.html"),
+        //         height: 1,
+        //         width: 1,
+        //         left: -1000,
+        //         top: -1000,
+        //         type: "popup",
+        //         focused: false,
+        //         state: "normal", 
                 
-                } , function(window){
+        //         } , function(window){
         
-                setTimeout(function(){ //Close window after sound plays 
-                    chrome.windows.remove(window.id);
-                }, 700);
-            });*/
-            })
-        })
+        //         setTimeout(function(){ //Close window after sound plays 
+        //             chrome.windows.remove(window.id);
+        //         }, 700);
+        //     });*/
+        // })
     })
 });
 
-// chrome.runtime.onStartup.addListener(() => { //Reset popup (Useful if chrome was quit whilst timer was active)
-    
-//     chrome.storage.sync.set({"started": false});
-//     console.log("Chrome Starting, popup reset to default")
-// });
+// Restore the timer state when Chrome starts up
+chrome.runtime.onStartup.addListener(() => {
+    chrome.storage.sync.get(["started", "sliderval"], function(result) {
+        // If the timer was active when Chrome was closed, restart it
+        if (result.started === true && result.sliderval) {
+            chrome.alarms.create("Posture Alarm", {
+                delayInMinutes: parseInt(result.sliderval),
+                periodInMinutes: parseInt(result.sliderval)
+            });
+            console.log("RESTORED ALARM ON STARTUP FOR " + result.sliderval + " MINUTE(S)");
+        } else {
+            // Otherwise reset to default state
+            chrome.storage.sync.set({"started": false});
+            console.log("Chrome Starting, popup reset to default");
+        }
+    });
+});

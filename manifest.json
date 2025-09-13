@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Posture Checker",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "A posture reminder",
     "icons": {
         "16": "content/16x16_trans.png",
